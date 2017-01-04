@@ -56,7 +56,7 @@ def main(_):
         value = model.cross_validation(train_data)
         print(value)
     elif sys.argv[1] == "gen":
-        model.train(train_data, 50, 4000)
+        model.train(train_data, 75, 20000)
         predictions = model.predict(test_data)
         save_predictions(predictions, sys.argv[2])
     

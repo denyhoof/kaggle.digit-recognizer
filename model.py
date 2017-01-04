@@ -12,6 +12,15 @@ def rand_choice(elem_count, arrays):
     return res
 
 
+def next_batch(arrays, batch_size, batch_pos):
+    if len(arrays) == 0:
+        return []
+    res = []
+    for array in arrays:
+        res.append(array[batch_pos : batch_pos + batch_size])
+    return res
+
+
 def weight_variable(shape):
         initial = tf.truncated_normal(shape, stddev=0.1)
         return tf.Variable(initial)
@@ -120,9 +129,13 @@ class MnistModel:
     def train(self, train_data, batch_size, it_count):
         print("Start train:")
         tf.initialize_all_variables().run()
+        batch_pos = 0
         for it in range(1, it_count + 1):
             print("it:", it, "/", it_count)
-            batch_ys, batch_xs = rand_choice(batch_size, train_data)
+            batch_ys, batch_xs = next_batch(train_data, batch_size, batch_pos)
+            batch_pos += batch_size
+            if batch_pos + batch_size > train_data[0].shape[0]:
+                batch_pos = 0
             if it % 250 == 0:
                print("Accuracy:", self.check([batch_ys, batch_xs]))
             self.sess.run(self.train_step, feed_dict={self.x: batch_xs, self.y_: batch_ys, self.keep_prob: 0.5})
